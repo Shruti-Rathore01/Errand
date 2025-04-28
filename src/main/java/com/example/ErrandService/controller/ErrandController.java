@@ -5,6 +5,8 @@ import com.example.ErrandService.model.User;
 import com.example.ErrandService.repo.UserRepository;
 import com.example.ErrandService.service.ErrandService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,8 +26,15 @@ public class ErrandController {
     }
 
     @GetMapping
-    public List<Errand> getAllErrands() {
-        return errandService.getAllErrands();
+    public ResponseEntity<?> getAllErrands() {
+        try {
+            List<Errand> errands = errandService.getAllErrands();
+            return ResponseEntity.ok(errands);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error retrieving errands: " + e.getMessage());
+        }
     }
 
     @GetMapping("/{id}")

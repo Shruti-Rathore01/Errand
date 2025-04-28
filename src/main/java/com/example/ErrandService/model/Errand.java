@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -61,6 +62,7 @@ public class Errand {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.requiredSkills = new HashSet<>();
 
         this.createdAt = createdAt;
         this.user = user;

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,9 @@ public class ErrandService{
     private ErrandRepository errandRepository;
 
     public Errand createErrand(Errand errand) {
+        if (errand.getRequiredSkills() == null) {
+            errand.setRequiredSkills(new HashSet<>());
+        }
         return errandRepository.save(errand);
     }
 
