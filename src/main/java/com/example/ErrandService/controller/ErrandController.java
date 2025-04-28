@@ -67,4 +67,29 @@ public class ErrandController {
 
         return matchingErrands;
     }
+
+    @PutMapping("/accept/{userId}/{errandId}")
+    public Object acceptErrand(@PathVariable Long userId,@PathVariable Long errandId)
+    {
+        User user=errandService.findUserById(userId);
+        Errand errand=errandService.findErrandById(errandId);
+        if (user == null || errand == null) {
+            return "User or Errand not found";
+        }
+        if (errand.getUser() != null) {
+            return "Errand already assigned to another user";
+        }
+        errand.setUser(user);
+        errandService.saveErrand(errand);
+        return "Errand accepted successfully!";
+    }
+    // Endpoint to mark errand as completed
+    @PutMapping("/complete/{errandId}")
+    public ResponseEntity<String> markErrandAsCompleted(@PathVariable Long errandId) {
+        String response = errandService.markErrandAsCompleted(errandId);
+        if (response.equals("Errand not found!") || response.equals("Errand is already completed.")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        return ResponseEntity.ok(response);
+    }
 }

@@ -8,9 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+
+import static com.example.ErrandService.model.Status.COMPLETED;
 
 @Service
 public class ErrandService{
@@ -66,5 +69,45 @@ public class ErrandService{
     }
 
 
+    public Errand findErrandById(Long errandId) {
+        return errandRepository.findById(errandId).orElse(null);
+    }
 
-}
+    public void saveErrand(Errand errand) {
+         errandRepository.save(errand);
+    }
+
+    public String markErrandAsCompleted(Long errandId) {
+        Optional<Errand> errandOpt = errandRepository.findById(errandId);
+
+        if (!errandOpt.isPresent()) {
+            return "Errand not found!";
+        }
+        Errand errand = errandOpt.get();
+
+        // Check if the errand is already completed
+        if ("COMPLETED".equals(errand.getStatus())) {
+            return "Errand is already completed.";
+        }
+
+        // Update the errand status to COMPLETED
+        errand.setStatus(COMPLETED);
+
+        // Save the updated errand
+        errandRepository.save(errand);
+
+        // Send notification to the user who created the errand
+        User user = errand.getUser();
+        sendCompletionNotification(user);
+
+        return "Errand marked as completed successfully!";
+    }
+
+    // Method to send notification to the user
+    private void sendCompletionNotification(User user) {
+        // Implement the logic for sending a notification (email/SMS/in-app)
+        String message = "Your errand has been completed!";
+        // Example: sendEmail(user.getEmail(), message);
+    }
+    }
+
